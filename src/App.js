@@ -1415,13 +1415,13 @@ export default function App() {
       {/* Phone frame */}
       <div
         style={{
-          width: window.innerWidth <= 430 ? '100%' : 780,
-          height: window.innerWidth <= 430 ? '100vh' :844,
+          width: window.innerWidth <= 820 ? '100%' : 390,
+          height: window.innerWidth <= 820 ? '100vh' :844,
           background: '#f2f2f7',
-          borderRadius: window.innerWidth <= 430 ? 0 : 54,
+          borderRadius: window.innerWidth <= 820 ? 0 : 54,
           overflow: 'hidden',
           boxShadow:
-            window.innerWidth <= 430
+            window.innerWidth <= 820
               ? 'none'
               : '0 40px 80px rgba(0,0,0,0.4), inset 0 0 0 2px rgba(255,255,255,0.15)',
           display: 'flex',
