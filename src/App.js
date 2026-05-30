@@ -10,64 +10,6 @@ const sampleSets = [
     emoji: '📚',
     cards: [
       { id: 1, front: 'apple', back: '사과', learned: false },
-      { id: 2, front: 'banana', back: '바나나', learned: false },
-      { id: 3, front: 'cherry', back: '체리', learned: false },
-      { id: 4, front: 'dragon', back: '용', learned: false },
-      { id: 5, front: 'elephant', back: '코끼리', learned: false },
-      { id: 6, front: 'forest', back: '숲', learned: false },
-      { id: 7, front: 'galaxy', back: '은하수', learned: false },
-      { id: 8, front: 'harmony', back: '조화', learned: false },
-    ],
-  },
-  {
-    id: 2,
-    title: '수학 공식 모음',
-    count: 15,
-    color: '#FF6B6B',
-    emoji: '📐',
-    cards: [
-      { id: 1, front: '피타고라스 정리', back: 'a² + b² = c²', learned: false },
-      { id: 2, front: '원의 넓이', back: 'πr²', learned: false },
-      {
-        id: 3,
-        front: '삼각형의 넓이',
-        back: '½ × 밑변 × 높이',
-        learned: false,
-      },
-      {
-        id: 4,
-        front: '근의 공식',
-        back: 'x = (-b ± √(b²-4ac)) / 2a',
-        learned: false,
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: '한국사 핵심 개념',
-    count: 25,
-    color: '#6BCB77',
-    emoji: '🏛️',
-    cards: [
-      {
-        id: 1,
-        front: '임진왜란',
-        back: '1592년 일본의 조선 침략',
-        learned: false,
-      },
-      {
-        id: 2,
-        front: '갑오개혁',
-        back: '1894년 조선의 근대적 개혁',
-        learned: false,
-      },
-      { id: 3, front: '3·1운동', back: '1919년 독립만세운동', learned: false },
-      {
-        id: 4,
-        front: '대한민국 건국',
-        back: '1948년 8월 15일',
-        learned: false,
-      },
     ],
   },
 ];
@@ -328,6 +270,7 @@ function SetDetailScreen({
   onStartFlash,
   onStartQuiz,
   onUpdateSet,
+  onDelete,
 }) {
   const learned = set.cards.filter((c) => c.learned).length;
   const handleDeleteCard = (cardId) => {
@@ -365,6 +308,7 @@ function SetDetailScreen({
         >
           ‹ 뒤로
         </button>
+        <button onClick={()=>{ if(window.confirm("세트를 삭제할까요?")) onDelete(); }} style={{ background:"rgba(255,0,0,0.3)", border:"none", borderRadius:20, padding:"6px 14px", color:"#fff", fontSize:14, cursor:"pointer", marginBottom:16 }}>🗑 삭제</button>
         <div style={{ fontSize: 36, marginBottom: 8 }}>{set.emoji}</div>
         <div
           style={{
@@ -1349,7 +1293,10 @@ export default function App() {
     setSets((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
     setSelectedSet(updated);
   };
-
+  const deleteSet = (id) => {
+    setSets(prev => prev.filter(s => s.id !== id));
+    setScreen("home");
+  };
   const tabs = [
     { id: 'home', icon: '🏠', label: '홈' },
     { id: 'addset', icon: '➕', label: '추가' },
@@ -1375,6 +1322,7 @@ export default function App() {
           onStartFlash={() => setScreen('flash')}
           onStartQuiz={() => setScreen('quiz')}
           onUpdateSet={updateSet}
+          onDelete={()=>deleteSet(selectedSet.id)}
         />
       );
     if (screen === 'flash' && selectedSet)
