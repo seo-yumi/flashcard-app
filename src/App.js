@@ -330,6 +330,14 @@ function SetDetailScreen({
   onUpdateSet,
 }) {
   const learned = set.cards.filter((c) => c.learned).length;
+  const handleDeleteCard = (cardId) => {
+    const updated = {
+      ...set,
+      cards: set.cards.filter((c) => c.id !== cardId),
+    };
+    onUpdateSet(updated);
+  };
+
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 100px' }}>
       {/* ✅ 수정: 템플릿 리터럴 올바르게 */}
@@ -490,6 +498,23 @@ function SetDetailScreen({
                 }}
               >
                 {card.learned ? '✓' : ''}
+              </div>
+              {/* ✅ 삭제 버튼 */}
+              <div
+                onClick={() => handleDeleteCard(card.id)}
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  background: '#FF6B6B22',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                }}
+              >
+                🗑️
               </div>
             </div>
           ))}
@@ -977,7 +1002,8 @@ function AddSetScreen({ onBack, onAdd }) {
   const addCard = () => setCards([...cards, { front: '', back: '' }]);
   const updateCard = (i, field, val) =>
     setCards(cards.map((c, ci) => (ci === i ? { ...c, [field]: val } : c)));
-
+  // ✅ 카드 삭제 함수
+  const deleteCard = (i) => setCards(cards.filter((_, ci) => ci !== i));
   const handleSave = () => {
     if (!title.trim()) return;
     const validCards = cards
@@ -1219,8 +1245,33 @@ function AddSetScreen({ onBack, onAdd }) {
             boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           }}
         >
-          <div style={{ fontSize: 12, color: '#aaa', marginBottom: 6 }}>
-            카드 {i + 1}
+          {/* ✅ 카드 헤더 + 삭제 버튼 */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 6,
+            }}
+          >
+            <div style={{ fontSize: 12, color: '#aaa' }}>카드 {i + 1}</div>
+            {cards.length > 1 && (
+              <button
+                onClick={() => deleteCard(i)}
+                style={{
+                  background: '#FF6B6B22',
+                  border: 'none',
+                  borderRadius: 10,
+                  padding: '3px 10px',
+                  fontSize: 12,
+                  color: '#FF6B6B',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                삭제
+              </button>
+            )}
           </div>
           <input
             value={card.front}
