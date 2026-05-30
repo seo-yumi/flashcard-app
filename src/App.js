@@ -8,9 +8,7 @@ const sampleSets = [
     count: 20,
     color: '#4F8EF7',
     emoji: '📚',
-    cards: [
-      { id: 1, front: 'apple', back: '사과', learned: false },
-    ],
+    cards: [{ id: 1, front: 'apple', back: '사과', learned: false }],
   },
 ];
 
@@ -269,6 +267,8 @@ function SetDetailScreen({
   onBack,
   onStartFlash,
   onStartQuiz,
+  onStartFlashWrong,
+  onStartQuizWrong, 
   onUpdateSet,
   onDelete,
 }) {
@@ -308,7 +308,23 @@ function SetDetailScreen({
         >
           ‹ 뒤로
         </button>
-        <button onClick={()=>{ if(window.confirm("세트를 삭제할까요?")) onDelete(); }} style={{ background:"rgba(255,0,0,0.3)", border:"none", borderRadius:20, padding:"6px 14px", color:"#fff", fontSize:14, cursor:"pointer", marginBottom:16 }}>🗑 삭제</button>
+        <button
+          onClick={() => {
+            if (window.confirm('세트를 삭제할까요?')) onDelete();
+          }}
+          style={{
+            background: 'rgba(255,0,0,0.3)',
+            border: 'none',
+            borderRadius: 20,
+            padding: '6px 14px',
+            color: '#fff',
+            fontSize: 14,
+            cursor: 'pointer',
+            marginBottom: 16,
+          }}
+        >
+          🗑 삭제
+        </button>
         <div style={{ fontSize: 36, marginBottom: 8 }}>{set.emoji}</div>
         <div
           style={{
@@ -362,6 +378,8 @@ function SetDetailScreen({
               color: '#FF6B6B',
               action: onStartQuiz,
             },
+            { label:"모르는것만\n플래시카드", icon:"🃏", color:"#6C63FF", action: onStartFlashWrong },
+            { label:"모르는것만\n퀴즈", icon:"📝", color:"#FF922B", action: onStartQuizWrong },
           ].map((m) => (
             <button
               key={m.label}
@@ -1294,8 +1312,8 @@ export default function App() {
     setSelectedSet(updated);
   };
   const deleteSet = (id) => {
-    setSets(prev => prev.filter(s => s.id !== id));
-    setScreen("home");
+    setSets((prev) => prev.filter((s) => s.id !== id));
+    setScreen('home');
   };
   const tabs = [
     { id: 'home', icon: '🏠', label: '홈' },
@@ -1321,8 +1339,10 @@ export default function App() {
           onBack={() => setScreen('home')}
           onStartFlash={() => setScreen('flash')}
           onStartQuiz={() => setScreen('quiz')}
+          onStartFlashWrong={()=>setScreen("flash-wrong")}
+          onStartQuizWrong={()=>setScreen("quiz-wrong")}
           onUpdateSet={updateSet}
-          onDelete={()=>deleteSet(selectedSet.id)}
+          onDelete={() => deleteSet(selectedSet.id)}
         />
       );
     if (screen === 'flash' && selectedSet)
@@ -1363,7 +1383,12 @@ export default function App() {
       {/* Phone frame */}
       <div
         style={{
-          width: "100%", height: "100vh", background:"#f2f2f7", borderRadius: 0, overflow:"hidden", boxShadow: "none",
+          width: '100%',
+          height: '100vh',
+          background: '#f2f2f7',
+          borderRadius: 0,
+          overflow: 'hidden',
+          boxShadow: 'none',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
