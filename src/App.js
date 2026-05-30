@@ -268,7 +268,7 @@ function SetDetailScreen({
   onStartFlash,
   onStartQuiz,
   onStartFlashWrong,
-  onStartQuizWrong, 
+  onStartQuizWrong,
   onUpdateSet,
   onDelete,
 }) {
@@ -378,8 +378,18 @@ function SetDetailScreen({
               color: '#FF6B6B',
               action: onStartQuiz,
             },
-            { label:"모르는것만\n플래시카드", icon:"🃏", color:"#6C63FF", action: onStartFlashWrong },
-            { label:"모르는것만\n퀴즈", icon:"📝", color:"#FF922B", action: onStartQuizWrong },
+            {
+              label: '모르는것만\n플래시카드',
+              icon: '🃏',
+              color: '#6C63FF',
+              action: onStartFlashWrong,
+            },
+            {
+              label: '모르는것만\n퀴즈',
+              icon: '📝',
+              color: '#FF922B',
+              action: onStartQuizWrong,
+            },
           ].map((m) => (
             <button
               key={m.label}
@@ -660,7 +670,23 @@ function FlashCardScreen({ set, onBack, onUpdateSet }) {
             lineHeight: 1.4,
           }}
         >
-          {flipped ? card.back : card.front}
+          {flipped ? (
+            <div style={{ textAlign: 'center' }}>
+              <div>{card.back}</div>
+              {card.synonym && (
+                <div style={{ fontSize: 16, color: '#aaa', marginTop: 10 }}>
+                  유의어: {card.synonym}
+                </div>
+              )}
+              {card.antonym && (
+                <div style={{ fontSize: 16, color: '#aaa', marginTop: 6 }}>
+                  반의어: {card.antonym}
+                </div>
+              )}
+            </div>
+          ) : (
+            card.front
+          )}
         </div>
         {!flipped && (
           <div
@@ -954,8 +980,14 @@ function AddSetScreen({ onBack, onAdd }) {
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
       const parsed = rows
+        .slice(1)
         .filter((row) => row[0] && row[1])
-        .map((row) => ({ front: String(row[0]), back: String(row[1]) }));
+        .map((row) => ({
+          front: String(row[0]),
+          back: String(row[1]),
+          synonym: row[2] ? String(row[2]) : '',
+          antonym: row[3] ? String(row[3]) : '',
+        }));
       if (parsed.length > 0) setCards(parsed);
     };
     reader.readAsBinaryString(file);
@@ -1339,8 +1371,8 @@ export default function App() {
           onBack={() => setScreen('home')}
           onStartFlash={() => setScreen('flash')}
           onStartQuiz={() => setScreen('quiz')}
-          onStartFlashWrong={()=>setScreen("flash-wrong")}
-          onStartQuizWrong={()=>setScreen("quiz-wrong")}
+          onStartFlashWrong={() => setScreen('flash-wrong')}
+          onStartQuizWrong={() => setScreen('quiz-wrong')}
           onUpdateSet={updateSet}
           onDelete={() => deleteSet(selectedSet.id)}
         />
@@ -1353,12 +1385,31 @@ export default function App() {
           onUpdateSet={updateSet}
         />
       );
-      if (screen==="flash-wrong" && selectedSet) return <FlashCardScreen set={{...selectedSet, cards: selectedSet.cards.filter(c=>!c.learned)}} onBack={()=>setScreen("detail")} onUpdateSet={updateSet} />;
+    if (screen === 'flash-wrong' && selectedSet)
+      return (
+        <FlashCardScreen
+          set={{
+            ...selectedSet,
+            cards: selectedSet.cards.filter((c) => !c.learned),
+          }}
+          onBack={() => setScreen('detail')}
+          onUpdateSet={updateSet}
+        />
+      );
     if (screen === 'quiz' && selectedSet)
       return (
         <QuizScreen set={selectedSet} onBack={() => setScreen('detail')} />
       );
-      if (screen==="quiz-wrong" && selectedSet) return <QuizScreen set={{...selectedSet, cards: selectedSet.cards.filter(c=>!c.learned)}} onBack={()=>setScreen("detail")} />;
+    if (screen === 'quiz-wrong' && selectedSet)
+      return (
+        <QuizScreen
+          set={{
+            ...selectedSet,
+            cards: selectedSet.cards.filter((c) => !c.learned),
+          }}
+          onBack={() => setScreen('detail')}
+        />
+      );
     if (screen === 'addset')
       return (
         <AddSetScreen
