@@ -1328,9 +1328,22 @@ function AddSetScreen({ onBack, onAdd }) {
 }
 
 export default function App() {
-  const [sets, setSets] = useState(sampleSets);
-  const [screen, setScreen] = useState('home'); // home | detail | flash | quiz | addset
+  const [sets, setSets] = useState(() => {
+    try {
+      const saved = localStorage.getItem('classcard-sets');
+      return saved ? JSON.parse(saved) : sampleSets;
+    } catch {
+      return sampleSets;
+    }
+  });
+  const [screen, setScreen] = useState('home');
   const [selectedSet, setSelectedSet] = useState(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('classcard-sets', JSON.stringify(sets));
+    } catch {}
+  }, [sets]);
 
   const updateSet = (updated) => {
     setSets((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
