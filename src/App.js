@@ -1416,7 +1416,7 @@ export default function App() {
       <div
         style={{
           width: window.innerWidth <= 430 ? '100%' : 780,
-          height: window.innerWidth <= 430 ? '100vh' : 1688,
+          height: window.innerWidth <= 430 ? '100vh' :844,
           background: '#f2f2f7',
           borderRadius: window.innerWidth <= 430 ? 0 : 54,
           overflow: 'hidden',
