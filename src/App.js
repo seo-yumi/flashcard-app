@@ -1353,10 +1353,12 @@ export default function App() {
           onUpdateSet={updateSet}
         />
       );
+      if (screen==="flash-wrong" && selectedSet) return <FlashCardScreen set={{...selectedSet, cards: selectedSet.cards.filter(c=>!c.learned)}} onBack={()=>setScreen("detail")} onUpdateSet={updateSet} />;
     if (screen === 'quiz' && selectedSet)
       return (
         <QuizScreen set={selectedSet} onBack={() => setScreen('detail')} />
       );
+      if (screen==="quiz-wrong" && selectedSet) return <QuizScreen set={{...selectedSet, cards: selectedSet.cards.filter(c=>!c.learned)}} onBack={()=>setScreen("detail")} />;
     if (screen === 'addset')
       return (
         <AddSetScreen
